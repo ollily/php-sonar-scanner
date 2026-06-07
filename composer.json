@@ -53,6 +53,9 @@
         }
     },
     "scripts": {
+        "post-update-cmd": [
+            "bash -c 'src/event/post-update.sh'"
+        ],
         "c-all": [
             "composer c-check",
             "composer c-test",
