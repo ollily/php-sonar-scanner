@@ -1,63 +1,128 @@
 #!/usr/bin/env bash
-# sonar-scanner-cli-8.1.0.6389.zip
 
-echo -e "Post Update"
+echo -e "Running post-update-cmd\n"
 
-OPSYS=
-VERSION=8.1.0.6389
-#$1
+ROOT_DIR=$1
+VERSION=$2
+FULL_WF=1
 
-ROOT_DIR=$(realpath $(dirname "${0}")/../..)
-LIB_DIR=${ROOT_DIR}/lib
-TARGET_DIR=${ROOT_DIR}/target
-TMP_DIR=${TARGET_DIR}/.tmp
+exitrc() {
+    if [ -n "${ERRC}" ]; then
+        echo -e "\nExit with '${ERRC}'\n"
+        exit 0
+    fi
+}
 
-US_AG="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:140.0) Gecko/20100101 Firefox/140.0"
+getos() {
+    case "$(uname -sr)" in
+       Darwin*)
+         OPSYS='mac'
+         ;;
+       Linux*Microsoft*)
+         OPSYS='wsl'
+         ;;
+       Linux*)
+         OPSYS='lin'
+         ;;
+       CYGWIN*|MINGW*|MINGW32*|MSYS*)
+         OPSYS='win'
+         ;;
+       *)
+         OPSYS='oth' 
+         ;;
+    esac
+}
 
-SONAR_URL=https://binaries.sonarsource.com/Distribution/sonar-scanner-cli
-SONAR_ZIP=sonar-scanner-cli-${VERSION}${OPSYS}.zip
-SONAR_FOLDER=sonar-scanner-${VERSION}${OPSYS}
-DL_URL=${SONAR_URL}/${SONAR_ZIP}
+validate(){
+    if [ ! -n "${VERSION}" ]; then
+        ERRC="No Version"; exitrc;
+    fi
+    if [ -n "${ROOT_DIR}" ]; then
+        ROOT_DIR=$(realpath ${ROOT_DIR})
+        LIB_DIR=${ROOT_DIR}/lib
+    else
+        ERRC="No root given"; exitrc;
+    fi
+    if [ ! -d "${ROOT_DIR}" ]; then
+        ERRC="Root not existing"; exitrc;
+    fi
+    if [ -d "${LIB_DIR}" ]; then
+        echo -e "Scanner already existing"
+        FULL_WF=0
+    fi
+}
 
 prepare(){
+    TARGET_DIR=${ROOT_DIR}/target
+    TMP_DIR=${TARGET_DIR}/.tmp
+
+    SONAR_URL=https://binaries.sonarsource.com/Distribution/sonar-scanner-cli
+    SONAR_ZIP=sonar-scanner-cli-${VERSION}.zip
+    SONAR_FOLDER=sonar-scanner-${VERSION}
+    SONAR_EXE=${LIB_DIR}/bin/sonar-scanner
+    DL_URL=${SONAR_URL}/${SONAR_ZIP}
+}
+
+download(){
+    echo ${TMP_DIR}
     if [ -d ${TMP_DIR} ]; then
         rm -rf ${TMP_DIR}
     fi
     mkdir -p ${TMP_DIR}
-    mkdir -p ${LIB_DIR}
-}
 
-dl(){
     cd ${TMP_DIR}
-    echo -e "Downloading '${DL_URL}'"
-    wget --user-agent="${US_AG}" ${DL_URL}
-    #touch ${SONAR_ZIP}
+    echo -e "Downloading '${DL_URL}'\n"
+    curl --insecure -s -o ${SONAR_ZIP} ${DL_URL}
 }
 
 unpack(){
-    if [ -f ${SONAR_ZIP} ]; then
-        echo -e "Unzipping '${SONAR_ZIP}'"
-        unzip ${SONAR_ZIP}
-        #mkdir ${SONAR_FOLDER}
-        #touch ${SONAR_FOLDER}/a.jar
+    if [ -s ${SONAR_ZIP} ]; then
+        echo -e "Unzipping '${SONAR_ZIP}'\n"
+        unzip -q ${SONAR_ZIP}
     else
-        echo -e "Nothing to unzip"
+        ERRC="Nothing to unzip"; exitrc;
     fi
 }
 
-final(){
+provide(){
     cd ${TMP_DIR}
     if [ -d ${SONAR_FOLDER} ]; then
-        mv ${SONAR_FOLDER}/* ${LIB_DIR}
+        echo -e "Provide scanner files\n"
+        #mkdir -p ${LIB_DIR}
+        mv ${SONAR_FOLDER}/* ${ROOT_DIR}
     else 
-        echo -e "no scanner found"
+        ERRC="No library found"; exitrc;
     fi
+}
+
+verify(){
+    if [ -f ${SONAR_EXE} ]; then
+        echo "VERIFY ${OPSYS}"
+        eval "${SONAR_EXE} -v"
+    else
+        ERRC="No scanner found"; exitrc;
+    fi
+}
+
+finish(){
+    echo -e "\nFinished\n"
+    exit 0
 }
 
 # main
+validate
+getos
 prepare
-dl
-unpack
-final
 
-echo -e "Finished"
+if [ "${FULL_WF}" = "1" ]; then
+    # Full process
+    download
+    unpack
+    provide
+#   verify
+    finish
+else
+    # Just check
+#    verify
+    finish
+fi

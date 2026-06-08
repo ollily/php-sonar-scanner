@@ -35,6 +35,7 @@
 /.* export-ignore
 /composer.lock export-ignore
 /docu-*.adoc export-ignore
+.createdir export-ignore
 #
 # Code Quality
 /*.dist export-ignore
@@ -44,3 +45,6 @@
 /phpunit.xml* export-ignore
 /.editorconfig export-ignore
 sonar-project.properties export-ignore
+/bin/ export-ignore
+/conf/ export-ignore
+/lib/ export-ignore

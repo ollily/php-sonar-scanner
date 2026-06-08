@@ -52,9 +52,15 @@
         "psr-4": {
         }
     },
+    "bin": [
+        "bin/sonar-scanner",
+        "bin/sonar-scanner-debug"
+    ],
     "scripts": {
         "post-update-cmd": [
-            "bash -c 'src/event/post-update.sh'"
+            "@putenv SONAR_VERSION=8.1.0.6389",
+            "bash -c 'src/event/post-update.sh \".\" \"${SONAR_VERSION}\"'",
+            "bin/sonar-scanner -v"
         ],
         "c-all": [
             "composer c-check",

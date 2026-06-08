@@ -183,6 +183,9 @@ vendor/
 
 ### Custom
 target/
+bin/
+conf/
+lib/
 wpcs/*
 nbproject/private/
 
