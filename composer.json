@@ -54,7 +54,6 @@
     },
     "bin": [
         "bin/sonar-scanner",
-        "bin\\sonar-scanner.bat",
         "bin/sonar-scanner-debug"
     ],
     "scripts": {
