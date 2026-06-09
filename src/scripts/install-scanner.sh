@@ -17,6 +17,13 @@
 # -------
 # -f    If scanner zip-file already exists, forece a reinstall
 #
+# License
+# -------
+# This source file is subject to the Apache-2.0 license that is bundled with this source code in the file LICENSE.
+#
+# Contact  : 426229+ollily@users.noreply.github.com
+# Homepage : https://github.com/ollily
+#
 
 log() {
     local msg="${1}"
@@ -140,20 +147,17 @@ verify(){
 }
 
 finish(){
-    log "post-update-cmd - END"
     exit 0
 }
 
 # main
-log "post-update-cmd - START"
-
 ROOT_DIR="${1}"
 VERSION="${2}"
 WF_FORCE="${3}"
 WF_FULL="1"
 
-validate
 getos
+validate
 prepare
 
 if [ "${WF_FULL}" = "1" ]; then

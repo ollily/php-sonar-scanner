@@ -59,8 +59,7 @@
     ],
     "scripts": {
         "post-update-cmd": [
-            "@putenv SONAR_VERSION=8.1.0.6389",
-            "bash -c 'src/event/post-update.sh \".\" \"${SONAR_VERSION}\"'"
+            "bash -c 'src/scripts/post-update-cmd.sh \".\"'"
         ],
         "c-all": [
             "composer c-check",
