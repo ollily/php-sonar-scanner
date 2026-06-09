@@ -1,12 +1,30 @@
 #!/usr/bin/env bash
+#
+# - Downloads the scanner zip-file
+# - Unpack it and put the files in the necessary folders
+# - Reinstalls, if scanner zip-file already downloaded
+#
+# Notes
+# -----
+# - The Sonarsource server doesn't like wget, so curl must be used
+# - Could not test the script on Mac OSX
+#
+# Usage
+# -----
+# ./post-update.sh [-f]
+#
+# Options
+# -------
+# -f    If scanner zip-file already exists, forece a reinstall
+#
 
-echo -e "Running post-update-cmd\n"
-
-ROOT_DIR=$1
-VERSION=$2
-FULL_WF=1
+log() {
+    local msg="${1}"
+    echo -e "${msg}"
+}
 
 exitrc() {
+    local ERRC="${1}"
     if [ -n "${ERRC}" ]; then
         echo -e "\nExit with '${ERRC}'\n"
         exit 0
@@ -16,39 +34,44 @@ exitrc() {
 getos() {
     case "$(uname -sr)" in
        Darwin*)
-         OPSYS='mac'
+         OPSYS='macosx-x64'
          ;;
        Linux*Microsoft*)
-         OPSYS='wsl'
+         OPSYS='windows-x64'
          ;;
        Linux*)
-         OPSYS='lin'
+         OPSYS='linux-x64'
          ;;
        CYGWIN*|MINGW*|MINGW32*|MSYS*)
-         OPSYS='win'
+         OPSYS='windows-x64'
          ;;
        *)
-         OPSYS='oth' 
+         OPSYS='' 
          ;;
     esac
+    log "Running on '${OPSYS}'"
 }
 
 validate(){
+    if [ -n "${WF_FORCE}" ]; then
+        log "Force reinstall"
+        WF_FORCE="-f"
+    fi
     if [ ! -n "${VERSION}" ]; then
-        ERRC="No Version"; exitrc;
+        exitrc "No Version"
     fi
     if [ -n "${ROOT_DIR}" ]; then
         ROOT_DIR=$(realpath ${ROOT_DIR})
         LIB_DIR=${ROOT_DIR}/lib
     else
-        ERRC="No root given"; exitrc;
+        exitrc "No root given"
     fi
     if [ ! -d "${ROOT_DIR}" ]; then
-        ERRC="Root not existing"; exitrc;
+        exitrc "Root not existing"
     fi
     if [ -d "${LIB_DIR}" ]; then
-        echo -e "Scanner already existing"
-        FULL_WF=0
+        log "No download is necessary"
+        WF_FULL=0
     fi
 }
 
@@ -57,72 +80,93 @@ prepare(){
     TMP_DIR=${TARGET_DIR}/.tmp
 
     SONAR_URL=https://binaries.sonarsource.com/Distribution/sonar-scanner-cli
-    SONAR_ZIP=sonar-scanner-cli-${VERSION}.zip
-    SONAR_FOLDER=sonar-scanner-${VERSION}
+    if [ -n "${OPSYS}" ]; then
+        SONAR_ZIP=sonar-scanner-cli-${VERSION}-${OPSYS}.zip
+        SONAR_FOLDER=sonar-scanner-${VERSION}-${OPSYS}
+    else
+        SONAR_ZIP=sonar-scanner-cli-${VERSION}.zip
+        SONAR_FOLDER=sonar-scanner-${VERSION}
+    fi
     SONAR_EXE=${LIB_DIR}/bin/sonar-scanner
     DL_URL=${SONAR_URL}/${SONAR_ZIP}
 }
 
 download(){
-    echo ${TMP_DIR}
-    if [ -d ${TMP_DIR} ]; then
-        rm -rf ${TMP_DIR}
-    fi
-    mkdir -p ${TMP_DIR}
+    if [ -f ${TMP_DIR}/${SONAR_ZIP} ]; then
+        log "Already existing '${SONAR_ZIP}'"
+    else
+        if [ -d ${TMP_DIR} ]; then
+            rm -rf ${TMP_DIR}
+        fi
+        mkdir -p ${TMP_DIR}
 
-    cd ${TMP_DIR}
-    echo -e "Downloading '${DL_URL}'\n"
-    curl --insecure -s -o ${SONAR_ZIP} ${DL_URL}
+        cd ${TMP_DIR}
+        log "Downloading '${DL_URL}'"
+        curl --insecure --parallel -o ${SONAR_ZIP} ${DL_URL}
+    fi
 }
 
 unpack(){
+    cd ${TMP_DIR}
     if [ -s ${SONAR_ZIP} ]; then
-        echo -e "Unzipping '${SONAR_ZIP}'\n"
-        unzip -q ${SONAR_ZIP}
+        log "Unzipping '${SONAR_ZIP}'"
+        unzip -u -q ${SONAR_ZIP}
     else
-        ERRC="Nothing to unzip"; exitrc;
+        exitrc "Nothing to unzip"
     fi
 }
 
 provide(){
     cd ${TMP_DIR}
     if [ -d ${SONAR_FOLDER} ]; then
-        echo -e "Provide scanner files\n"
-        #mkdir -p ${LIB_DIR}
-        mv ${SONAR_FOLDER}/* ${ROOT_DIR}
+        log "Provide scanner files"
+        if [ -d ${LIB_DIR} ]; then
+           rm -rf ${LIB_DIR}
+           sleep 1
+        fi
+        mkdir -p ${LIB_DIR}
+        mv -f -u ${SONAR_FOLDER}/* ${LIB_DIR}
     else 
-        ERRC="No library found"; exitrc;
+        exitrc "No library found"
     fi
 }
 
 verify(){
     if [ -f ${SONAR_EXE} ]; then
-        echo "VERIFY ${OPSYS}"
         eval "${SONAR_EXE} -v"
     else
-        ERRC="No scanner found"; exitrc;
+        exitrc "No scanner found"
     fi
 }
 
 finish(){
-    echo -e "\nFinished\n"
+    log "post-update-cmd - END"
     exit 0
 }
 
 # main
+log "post-update-cmd - START"
+
+ROOT_DIR="${1}"
+VERSION="${2}"
+WF_FORCE="${3}"
+WF_FULL="1"
+
 validate
 getos
 prepare
 
-if [ "${FULL_WF}" = "1" ]; then
+if [ "${WF_FULL}" = "1" ]; then
     # Full process
     download
     unpack
     provide
-#   verify
-    finish
 else
-    # Just check
-#    verify
-    finish
+    if [ "${WF_FORCE}" = "-f" ]; then
+        # Just reinstall
+        unpack
+        provide
+    fi
 fi
+    
+finish

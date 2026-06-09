@@ -183,8 +183,8 @@ vendor/
 
 ### Custom
 target/
-bin/
 conf/
+jre/
 lib/
 wpcs/*
 nbproject/private/

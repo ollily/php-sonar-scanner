@@ -54,13 +54,13 @@
     },
     "bin": [
         "bin/sonar-scanner",
+        "bin\\sonar-scanner.bat",
         "bin/sonar-scanner-debug"
     ],
     "scripts": {
         "post-update-cmd": [
             "@putenv SONAR_VERSION=8.1.0.6389",
-            "bash -c 'src/event/post-update.sh \".\" \"${SONAR_VERSION}\"'",
-            "bin/sonar-scanner -v"
+            "bash -c 'src/event/post-update.sh \".\" \"${SONAR_VERSION}\"'"
         ],
         "c-all": [
             "composer c-check",
