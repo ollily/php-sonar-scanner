@@ -26,4 +26,4 @@ if ($argc >= 2) {
     }
 }
 
-echo "\npost-update-cmd - END";
+echo "\npost-update-cmd - END\n";

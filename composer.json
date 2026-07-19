@@ -60,7 +60,8 @@
             "composer c-test",
             "@php -Dproject.settings=sonar-project.properties vendor/bin/sonar-scanner"
         ],
-        "c-test": "@php -d xdebug.mode=coverage vendor/bin/phpunit -c phpunit.xml.cov",
+        "c-test": "@php -d xdebug.mode=coverage vendor/bin/phpunit -c phpunit.xml.cov"
+    },
     "scripts-descriptions": {
         "c-sonar": "CUSTOM: Sonarcloud verifies your code",
         "c-test": "CUSTOM: PHPUnit executes all unit tests"
