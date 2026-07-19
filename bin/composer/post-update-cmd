@@ -1,0 +1,29 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+/*
+ * This file is part of php-sonar-scanner
+ *
+ * (c) 2026 ollily
+ *
+ * This source file is subject to the Apache-2.0 license that is bundled
+ * with this source code in the file LICENSE.
+ */
+
+require_once __DIR__ . DIRECTORY_SEPARATOR . 'install-scanner';
+
+echo "\npost-update-cmd - START";
+
+$SONAR_VERSION = '8.1.0.6389';
+if ($argc >= 2) {
+    $obj = new InstallScanner(); // @phpstan-ignore class.notFound
+    if ($argc >= 3) {
+        $obj->installScanner("$argv[1]", "$SONAR_VERSION", "$argv[2]"); // @phpstan-ignore class.notFound
+    } else {
+        $obj->installScanner("$argv[1]", "$SONAR_VERSION"); // @phpstan-ignore class.notFound
+    }
+}
+
+echo "\npost-update-cmd - END";
