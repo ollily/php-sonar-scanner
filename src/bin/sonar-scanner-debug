@@ -33,7 +33,7 @@ fi
 php -f "${selfdir}/composer/post-update-cmd" "."
 
 
-dir=$(cd "${self%[/\\]*}" > /dev/null; cd ../lib/bin && pwd)
+dir=$(cd "${self%[/\\]*}" > /dev/null; cd ../../lib/bin && pwd)
 if [ iscygwin==1 ]; then
     dir=$(cygpath -m "$dir");
     execFile=${dir}/sonar-scanner-debug.bat

@@ -29,7 +29,7 @@
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
-        "php": ">=8.0",
+        "php": ">=8.3",
         "ext-zip": "*"
     },
     "provide": {
@@ -49,18 +49,22 @@
         }
     },
     "bin": [
-        "bin/sonar-scanner",
-        "bin/sonar-scanner-debug"
+        "src/bin/sonar-scanner",
+        "src/bin/sonar-scanner-debug"
     ],
     "scripts": {
         "c-sonar": [
+            "@php -d project.settings=sonar-project.properties -f src/bin/sonar-scanner"
+        ],
+        "c-sonar-full": [
             "composer c-test",
-            "@php -Dproject.settings=sonar-project.properties vendor/bin/sonar-scanner"
+            "composer c-sonar"
         ],
         "c-test": "@php -d xdebug.mode=coverage vendor/bin/phpunit -c phpunit.xml.cov"
     },
     "scripts-descriptions": {
         "c-sonar": "CUSTOM: Sonarcloud verifies your code",
+        "c-sonar-full": "CUSTOM: c-test, c-sonar",
         "c-test": "CUSTOM: PHPUnit executes all unit tests"
     }
 }

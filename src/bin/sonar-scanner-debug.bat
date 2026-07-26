@@ -1,7 +1,7 @@
 @ECHO OFF
 setlocal DISABLEDELAYEDEXPANSION
 
-SET BIN_TARGET=%~dp0..\lib\bin\sonar-scanner.bat
+SET BIN_TARGET=%~dp0..\..\lib\bin\sonar-scanner-debug.bat
 
 IF NOT EXIST %BIN_TARGET% (
     php -f "%~dp0composer\post-update-cmd" "."
