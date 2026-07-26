@@ -103,7 +103,7 @@ class InstallScanner
             $this->exitrc('Root not existing');
         }
         if (is_dir($libDir)) {
-            echo "\nNo downloadFile is necessary";
+            // echo "\nNo downloadFile is necessary";
             $full = 0;
         }
     }
@@ -167,7 +167,7 @@ class InstallScanner
             echo "\nProvide scanner files";
             if (is_dir($libDir)) {
                 $this->cleanUpFolder($libDir);
-                sleep(1);
+                sleep(3);
             }
             mkdir($libDir, recursive: true);
             $this->moveAllFiles($extractFolder, $libDir);
@@ -216,7 +216,8 @@ class InstallScanner
             }
             $result = true;
         }
-
+        echo "\n";
+        
         return $result;
     }
 }

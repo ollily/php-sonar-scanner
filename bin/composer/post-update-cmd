@@ -14,7 +14,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . DIRECTORY_SEPARATOR . 'install-scanner';
 
-echo "\npost-update-cmd - START";
+// echo "\npost-update-cmd - START";
 
 $SONAR_VERSION = '8.1.0.6389';
 if ($argc >= 2) {
@@ -26,4 +26,4 @@ if ($argc >= 2) {
     }
 }
 
-echo "\npost-update-cmd - END\n";
+// echo "\npost-update-cmd - END\n";

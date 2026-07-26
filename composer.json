@@ -53,9 +53,6 @@
         "bin/sonar-scanner-debug"
     ],
     "scripts": {
-        "post-update-cmd": [
-            "@php bin/composer/post-update-cmd \".\""
-        ],
         "c-sonar": [
             "composer c-test",
             "@php -Dproject.settings=sonar-project.properties vendor/bin/sonar-scanner"
