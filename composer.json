@@ -49,12 +49,12 @@
         }
     },
     "bin": [
-        "src/bin/sonar-scanner",
-        "src/bin/sonar-scanner-debug"
+        "sonar-scanner",
+        "sonar-scanner-debug"
     ],
     "scripts": {
         "c-sonar": [
-            "@php -d project.settings=sonar-project.properties -f src/bin/sonar-scanner"
+            "@php -f sonar-scanner -- -D project.settings=sonar-project.properties "
         ],
         "c-sonar-full": [
             "composer c-test",

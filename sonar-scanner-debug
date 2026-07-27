@@ -1,0 +1,32 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+/*
+ * This file is part of php-sonar-scanner
+ *
+ * (c) 2026 ollily
+ *
+ * This source file is subject to the Apache-2.0 license that is bundled
+ * with this source code in the file LICENSE.
+ */
+
+$SONAR_VERSION = '8.1.0.6389';
+$startCmd = 'sonar-scanner-debug ';
+
+$DS = DIRECTORY_SEPARATOR;
+$installPath = realpath(__DIR__);
+
+$startPath = $installPath . $DS . 'lib' . $DS . 'bin';
+$startArgs = $argv;
+array_shift($startArgs);
+$execCmd = $startPath . $DS . $startCmd . implode(' ', $startArgs);
+
+if (!is_dir($startPath)) {
+    require_once __DIR__ . $DS . 'src' . $DS . 'composer' . $DS . 'install-scanner';
+    $obj = new InstallScanner();
+    $obj->installScanner("$installPath", "$SONAR_VERSION");
+}
+
+shell_exec(escapeshellcmd($execCmd));

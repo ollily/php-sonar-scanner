@@ -23,40 +23,26 @@ include::{site_resource}/adoc-cmmn-all.adoc[opts=optional]
 
 === Unix / Linux
 
-There is nothing to configure. You can use this library ootb.
+There is nothing to configure. Any necessary installation will be done with the first execution. You can use this library ootb.
 
 === Windows
 
-There is nothing to configure. You can use this library ootb.
+There is nothing to configure. Any necessary installation will be done with the first execution. You can use this library ootb.
 
-== Development
+== Rescue Mode
 
-Some infos, in case you want to fork and extend this library,
-
-=== Build & Test
-
-Start the whole build (run composer with c-check, c-test, c-format)
-
-    composer c-all
-
-=== UNIT Tests
-
-Starting the unit tests with PHPUnit
-
-    composer c-test
+In case something doesn't work properly anymore, you can reinstall the scanner. Just delete the lib-folder. With the next run the sonar-scanner will be reinstalled.
 
 === Structure
 
 Relevant files and folders
 
     <project-root>
-    |--src
-    |  |-- 
-    |  |-- 
+    |- lib
+    |  |- bin
     |
-    |--tests
-    |  |-- 
-    |  |-- 
+    |- src
+    |  |- bin
     |
     |--vendor
     |  |- *
