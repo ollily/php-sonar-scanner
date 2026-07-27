@@ -374,16 +374,6 @@ endif::[]
 {pj_ps_langcount_img}
 {pj_ps_issues_img}
 
-{cm_shlds_tool_phpunit_img}
-{cm_shlds_tool_sonarcloud_img}
-{cm_shlds_tool_cdcy_img}
-{cm_shlds_tool_cvrlls_img}
-
-image:{cm_shlds_tool_phpcsfixer_url}[title="PHP CS Fixer Ruleset"]
-image:{cm_shlds_tool_phpstan_url}[title="PHPStan Level"]
-image:{cm_shlds_tool_psalm_url}[title="Psalm Level"]
-image:{cm_shlds_tool_phpcs_url}[title="PHP CodeSniffer Ruleset""]
-image:{cm_shlds_tool_phpmd_url}[title="PHP Mess Detector Ruleset"]
 
 == Description
 
@@ -424,17 +414,9 @@ Including `sonar-project.properties` located in the project root.
  src\bin\sonar-scanner.bat -d project.settings=<path-to-sonar-project.properties> [other options]
  src\bin\sonar-scanner-debug.bat -d project.settings=<path-to-sonar-project.properties> [other options]
 
-== Project Status
-
-Please read the link:docu-analysis.adoc[project status].
-
 == Additional Information
 
 * link:docu-commands.adoc[Composer Commands] - New commands for composer
-
-== Notice
-
-link:{pj_snr_dash_url}[image:{cm_snr_tool_sonarcloud_url}[title="Sonarcloud Logo"]]
 
 == Reference
 * link:https://getcomposer.org/[Composer]
