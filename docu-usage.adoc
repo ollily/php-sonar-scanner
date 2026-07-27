@@ -1,2 +1,22 @@
 
-=== Heading
+=== Analysis with Sonarcloud
+Including `sonar-project.properties` located in the project root.
+
+ composer c-sonar
+
+=== Generating test coverage and the Sonarcloud analysis
+Including `sonar-project.properties` located in the project root.
+
+ composer c-sonar-full
+
+=== Calling the vendor binary
+
+==== Unix / Linux
+
+ src/bin/sonar-scanner -d project.settings=<path-to-sonar-project.properties> [other options]
+ src/bin/sonar-scanner-debug -d project.settings=<path-to-sonar-project.properties> [other options]
+
+==== Windows
+
+ src\bin\sonar-scanner.bat -d project.settings=<path-to-sonar-project.properties> [other options]
+ src\bin\sonar-scanner-debug.bat -d project.settings=<path-to-sonar-project.properties> [other options]

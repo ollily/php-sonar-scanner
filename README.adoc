@@ -389,6 +389,12 @@ image:{cm_shlds_tool_phpmd_url}[title="PHP Mess Detector Ruleset"]
 
 A sonar-scanner for PHP using composer.
 
+On the hunt for a Sonar scanner which is provided by composer, I didn't found any library which was working or had the current version of the scanner.
+So I decided to write a new library.
+
+The library is tested with Windows and Windows with Cygwin, so it will (hopefully) work with Linux also.
+Unfortunately I am not able to test the library with MacOs. So link:./issues[let me know], if and what is not working.
+
 == Configuration
 
 Please read the link:docu-config.adoc[configuration].
@@ -396,11 +402,27 @@ Please read the link:docu-config.adoc[configuration].
 == Usage
 
 
-=== Heading
+=== Analysis with Sonarcloud
+Including `sonar-project.properties` located in the project root.
 
-== Examples
+ composer c-sonar
 
-Please read some link:docu-examples.adoc[examples].
+=== Generating test coverage and the Sonarcloud analysis
+Including `sonar-project.properties` located in the project root.
+
+ composer c-sonar-full
+
+=== Calling the vendor binary
+
+==== Unix / Linux
+
+ src/bin/sonar-scanner -d project.settings=<path-to-sonar-project.properties> [other options]
+ src/bin/sonar-scanner-debug -d project.settings=<path-to-sonar-project.properties> [other options]
+
+==== Windows
+
+ src\bin\sonar-scanner.bat -d project.settings=<path-to-sonar-project.properties> [other options]
+ src\bin\sonar-scanner-debug.bat -d project.settings=<path-to-sonar-project.properties> [other options]
 
 == Project Status
 
