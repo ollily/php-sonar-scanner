@@ -163,7 +163,9 @@ $projRules = [
     'header_comment' => ['header' => $headerText]
 ];
 
-$finder = PhpCsFixer\Finder::create()->in(__DIR__ . '/src')->in(__DIR__ . '/tests');
+$finder = PhpCsFixer\Finder::create()
+    ->name('*')
+    ->in(__DIR__ . '/src')->in(__DIR__ . '/tests');
 
 $phpfixer = (new PhpCsFixer\Config())
     ->setCacheFile(__DIR__ . '/target/.php-cs-fixer.cache')

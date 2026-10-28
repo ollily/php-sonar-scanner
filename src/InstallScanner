@@ -16,8 +16,7 @@ class InstallScanner
     /**
      * @param mixed $msg
      */
-    private function exitrc(mixed $msg): void
-    {
+    private function exitrc(mixed $msg): void    {
         if (!empty($msg)) {
             print_r("\nexitrc: Exit with '$msg'");
         }
