@@ -13,20 +13,32 @@ declare(strict_types=1);
  */
 
 $SONAR_VERSION = '8.1.0.6389';
-$startCmd = 'sonar-scanner ';
-
 $DS = DIRECTORY_SEPARATOR;
-$installPath = realpath(__DIR__);
+$SONAR_CMD = 'sonar-scanner';
 
-$startPath = $installPath . $DS . 'lib' . $DS . 'bin';
-$startArgs = $argv;
-array_shift($startArgs);
-$execCmd = $startPath . $DS . $startCmd . implode(' ', $startArgs);
+$sonarArgs = $argv;
+array_shift($sonarArgs);
+$projectFolder = realpath(__DIR__);
+$sonarInstallFolder = "${projectFolder}${DS}lib";
+$sonarBinFolder = "${sonarInstallFolder}${DS}bin";
+$phpInstallScanner = __DIR__ . "${DS}src${DS}composer${DS}install-scanner";
 
-if (!is_dir($startPath)) {
-    require_once __DIR__ . $DS . 'src' . $DS . 'composer' . $DS . 'install-scanner';
-    $obj = new InstallScanner();
-    $obj->installScanner("$installPath", "$SONAR_VERSION");
+$execCmd = "${sonarBinFolder}${DS}${SONAR_CMD} " . implode(' ', $sonarArgs);
+
+print_r("\n----------------------");
+print_r("\nSONAR_VERSION        : ${SONAR_VERSION}");
+print_r("\nprojectFolder        : ${projectFolder}");
+print_r("\nsonarInstallFolder   : ${sonarInstallFolder}");
+print_r("\nsonarBinFolder       : ${sonarBinFolder}");
+print_r("\nexecCmd              : ${execCmd}");
+print_r("\nphpInstallScanner    : ${phpInstallScanner}");
+print_r("\n----------------------");
+if (!is_dir($sonarBinFolder)) {
+    require_once $phpInstallScanner;
+    $obj_scanner = new InstallScanner();
+    $obj_scanner->installScanner($projectFolder, $sonarInstallFolder, $SONAR_VERSION);
+} else {
+    print_r("Sonar-scanner is already installed: '${sonarBinFolder}'");
 }
 
-shell_exec(escapeshellcmd($execCmd));
+//shell_exec(escapeshellcmd($execCmd));
