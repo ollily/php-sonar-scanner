@@ -3,12 +3,21 @@
 
 declare(strict_types=1);
 
+/*
+ * This file is part of ollily/php-sonar-scanner
+ *
+ * (c) 2026 ollily
+ *
+ * This source file is subject to the Apache-2.0 license that is bundled
+ * with this source code in the file LICENSE.
+ */
+
 require_once __DIR__ . DIRECTORY_SEPARATOR . 'Tools' . DIRECTORY_SEPARATOR . 'Unzip';
 
 class InstallScanner
 {
-
     private const bool DEBUG_INFO = true;
+
     private const string SONAR_URL = 'https://binaries.sonarsource.com/Distribution/sonar-scanner-cli';
 
     // Common functions
@@ -16,9 +25,10 @@ class InstallScanner
     /**
      * @param mixed $msg
      */
-    private function exitrc(mixed $msg): void    {
+    private function exitrc(mixed $msg): void
+    {
         if (!empty($msg)) {
-            print_r("\nexitrc: Exit with '$msg'");
+            print_r("\nexitrc: Exit with '{$msg}'");
         }
 
         die(0);
@@ -30,23 +40,24 @@ class InstallScanner
     private function cleanUpFolder(string $folder): void
     {
         if (!empty($folder) && is_dir($folder)) {
-            print_r("\ncleanUpFolder: Cleanup folder '${folder}'");
-//            $recDI = new RecursiveDirectoryIterator($folder, FilesystemIterator::SKIP_DOTS);
-//            $recII = new RecursiveIteratorIterator($recDI, RecursiveIteratorIterator::CHILD_FIRST);
-//            /** @var SplFileInfo $deleteItem */
-//            foreach ($recII as $deleteItem) {
-//                $deleteItem->isDir() ? rmdir($deleteItem->getRealPath()) : unlink($deleteItem->getRealPath());
-//            }
-//            rmdir($folder);
+            print_r("\ncleanUpFolder: Cleanup folder '{$folder}'");
+            //            $recDI = new RecursiveDirectoryIterator($folder, FilesystemIterator::SKIP_DOTS);
+            //            $recII = new RecursiveIteratorIterator($recDI, RecursiveIteratorIterator::CHILD_FIRST);
+            //            /** @var SplFileInfo $deleteItem */
+            //            foreach ($recII as $deleteItem) {
+            //                $deleteItem->isDir() ? rmdir($deleteItem->getRealPath()) : unlink($deleteItem->getRealPath());
+            //            }
+            //            rmdir($folder);
             print_r("\ncleanUpFolder: Cleanup up done");
         } else {
-            print_r("\ncleanUpFolder: Nothing to clean in folder '$folder'");
+            print_r("\ncleanUpFolder: Nothing to clean in folder '{$folder}'");
         }
     }
 
     /**
      * @param string $dlUrl
      * @param string $targetFile
+     *
      * @return bool
      */
     private function downloadFile(string $dlUrl, string $targetFile): bool
@@ -74,6 +85,7 @@ class InstallScanner
             }
             fclose($fileHandle);
         }
+
         return $result;
     }
 
@@ -84,7 +96,7 @@ class InstallScanner
     private function moveAllFiles(string $srcFolder, string $targetFolder): void
     {
         if (!empty($srcFolder) && is_dir($srcFolder) && !empty($targetFolder) && is_dir($targetFolder)) {
-            print_r("\nmoveAllFiles: Moving folder from '$srcFolder' to '$targetFolder'");
+            print_r("\nmoveAllFiles: Moving folder from '{$srcFolder}' to '{$targetFolder}'");
             $files = scandir($srcFolder);
             if (is_array($files)) {
                 foreach ($files as $file) {
@@ -95,7 +107,7 @@ class InstallScanner
             }
             print_r("\nmoveAllFiles: Moving done");
         } else {
-            print_r("\nmoveAllFiles: Nothing to move from '$srcFolder' to '$targetFolder'");
+            print_r("\nmoveAllFiles: Nothing to move from '{$srcFolder}' to '{$targetFolder}'");
         }
     }
 
@@ -133,10 +145,11 @@ class InstallScanner
 
     /**
      * @param string $forceInstall
-     * @param int $fullProcess
+     * @param int    $fullProcess
      * @param string $sonarVersion
      * @param string $rootDir
      * @param string $sonarInstallDir
+     *
      * @return array<mixed>
      */
     private function validateInput(string $forceInstall, int $fullProcess, string $sonarVersion, string $rootDir, string $sonarInstallDir): array
@@ -165,6 +178,7 @@ class InstallScanner
             print_r("\nvalidateInput: Sonar-scanner already exists");
             $fullProcess = 0;
         }
+
         return [$forceInstall, $fullProcess, $rootDir];
     }
 
@@ -180,13 +194,13 @@ class InstallScanner
         $tmpDir = $rootDir . DIRECTORY_SEPARATOR . 'target' . DIRECTORY_SEPARATOR . '.tmp';
 
         if (!empty($opSys)) {
-            $sonarZip = "sonar-scanner-cli-$sonarVersion-$opSys.zip";
-            $sonarFolderInZip = "sonar-scanner-$sonarVersion-$opSys";
+            $sonarZip = "sonar-scanner-cli-{$sonarVersion}-{$opSys}.zip";
+            $sonarFolderInZip = "sonar-scanner-{$sonarVersion}-{$opSys}";
         } else {
-            $sonarZip = "sonar-scanner-cli-$sonarVersion.zip";
-            $sonarFolderInZip = "sonar-scanner-$sonarVersion";
+            $sonarZip = "sonar-scanner-cli-{$sonarVersion}.zip";
+            $sonarFolderInZip = "sonar-scanner-[$sonarVersion]";
         }
-        $dlUrl = self::SONAR_URL . "/$sonarZip";
+        $dlUrl = self::SONAR_URL . "/{$sonarZip}";
 
         return [$tmpDir, $dlUrl, $sonarFolderInZip, $sonarZip];
     }
@@ -195,7 +209,7 @@ class InstallScanner
     {
         $targetFile = $tmpDir . DIRECTORY_SEPARATOR . $sonarZip;
         if (file_exists($targetFile)) {
-            print_r("\ndownloadZip: Already existing '$targetFile'");
+            print_r("\ndownloadZip: Already existing '{$targetFile}'");
         } else {
             if (is_dir($tmpDir)) {
                 $this->cleanUpFolder($tmpDir);
@@ -203,7 +217,7 @@ class InstallScanner
             if (!is_dir($tmpDir)) {
                 mkdir($tmpDir, recursive: true);
             }
-            print_r("\ndownloadZip: Downloading '$dlUrl' to '$targetFile'");
+            print_r("\ndownloadZip: Downloading '{$dlUrl}' to '{$targetFile}'");
             $result = $this->downloadFile($dlUrl, $targetFile);
             if (!$result) {
                 $this->execrc('Zipfile not downloaded');
@@ -223,14 +237,14 @@ class InstallScanner
         $extractFolder = $tmpDir . DIRECTORY_SEPARATOR . $sonarFolderInZip;
 
         if (file_exists($zipFile)) {
-            print_r("\nprovideFiles: Unzipping '$zipFile'");
+            print_r("\nprovideFiles: Unzipping '{$zipFile}'");
             \ollily\Tools\Unzip::myFile($zipFile, $tmpDir); // @phpstan-ignore class.notFound
         } else {
-            $this->exitrc("Zipfile not found '$sonarZip'");
+            $this->exitrc("Zipfile not found '{$sonarZip}'");
         }
 
         if (is_dir($extractFolder)) {
-            print_r("\nprovideFiles: Provide scanner files from '$extractFolder'");
+            print_r("\nprovideFiles: Provide scanner files from '{$extractFolder}'");
             if (is_dir($sonarInstallDir)) {
                 $this->cleanUpFolder($sonarInstallDir);
                 print_r("\nprovideFiles: Need a pause");
@@ -241,7 +255,7 @@ class InstallScanner
             }
             $this->moveAllFiles($extractFolder, $sonarInstallDir);
         } else {
-            $this->exitrc("No library found in '$extractFolder'");
+            $this->exitrc("No library found in '{$extractFolder}'");
         }
     }
 
@@ -257,10 +271,10 @@ class InstallScanner
      * <b>Options</b>
      * -f    If scanner zip-file already exists, forece a reinstall
      *
-     * @param string $rootDir The base folder of this composer library
+     * @param string $rootDir         The base folder of this composer library
      * @param string $sonarInstallDir The base folder, where to install the scanner
-     * @param string $sonarVersion The version of the scanner as provided by sonar-source
-     * @param string $forceInstall '-f'=Reinstall the scanner (Default: '')
+     * @param string $sonarVersion    The version of the scanner as provided by sonar-source
+     * @param string $forceInstall    '-f'=Reinstall the scanner (Default: '')
      *
      * @return bool TRUE=success, else FALSE
      */
@@ -276,16 +290,16 @@ class InstallScanner
 
         if (self::DEBUG_INFO) {
             print_r("\n------------------");
-            print_r("\nrootDir          : '$rootDir'");
-            print_r("\nsonarInstallDir  : '$sonarInstallDir'");
-            print_r("\nsonarVersion     : '$sonarVersion'");
-            print_r("\nforceInstall     : '$forceInstall'");
-            print_r("\nfullProcess      : '$fullProcess'");
-            print_r("\nopSys            : '$opSys'");
-            print_r("\ntmpDir           : '$tmpDir'");
-            print_r("\ndlUrl            : '$dlUrl'");
-            print_r("\nsonarZip         : '$sonarZip'");
-            print_r("\nsonarFolderInZip : '$sonarFolderInZip'");
+            print_r("\nrootDir          : '{$rootDir}'");
+            print_r("\nsonarInstallDir  : '{$sonarInstallDir}'");
+            print_r("\nsonarVersion     : '{$sonarVersion}'");
+            print_r("\nforceInstall     : '{$forceInstall}'");
+            print_r("\nfullProcess      : '{$fullProcess}'");
+            print_r("\nopSys            : '{$opSys}'");
+            print_r("\ntmpDir           : '{$tmpDir}'");
+            print_r("\ndlUrl            : '{$dlUrl}'");
+            print_r("\nsonarZip         : '{$sonarZip}'");
+            print_r("\nsonarFolderInZip : '{$sonarFolderInZip}'");
             print_r("\n------------------");
         }
         if ($fullProcess == 1) {

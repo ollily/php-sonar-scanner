@@ -4,7 +4,7 @@
 declare(strict_types=1);
 
 /*
- * This file is part of php-sonar-scanner
+ * This file is part of ollily/php-sonar-scanner
  *
  * (c) 2026 ollily
  *
@@ -21,21 +21,21 @@ $SONAR_CMD = 'sonar-scanner-debug';
 
 $sonarArgs = $argv;
 array_shift($sonarArgs);
-$projectFolder = realpath(__DIR__ . "${DS}..");
-$sonarInstallFolder = "$projectFolder${DS}lib";
-$sonarBinFolder = "$sonarInstallFolder${DS}bin";
-$phpInstallScanner = __DIR__ . "${DS}InstallScanner";
+$projectFolder = realpath(__DIR__ . "{$DS}..");
+$sonarInstallFolder = "{$projectFolder}{$DS}lib";
+$sonarBinFolder = "{$sonarInstallFolder}{$DS}bin";
+$phpInstallScanner = __DIR__ . "{$DS}InstallScanner";
 
-$execCmd = "$sonarBinFolder${DS}$SONAR_CMD " . implode(' ', $sonarArgs);
+$execCmd = "{$sonarBinFolder}{$DS}{$SONAR_CMD} " . implode(' ', $sonarArgs);
 
 if (DEBUG_INFO) {
     print_r("\n----------------------");
-    print_r("\nSONAR_VERSION        : $SONAR_VERSION");
-    print_r("\nprojectFolder        : $projectFolder");
-    print_r("\nsonarInstallFolder   : $sonarInstallFolder");
-    print_r("\nsonarBinFolder       : $sonarBinFolder");
-    print_r("\nexecCmd              : $execCmd");
-    print_r("\nphpInstallScanner    : $phpInstallScanner");
+    print_r("\nSONAR_VERSION        : {$SONAR_VERSION}");
+    print_r("\nprojectFolder        : {$projectFolder}");
+    print_r("\nsonarInstallFolder   : {$sonarInstallFolder}");
+    print_r("\nsonarBinFolder       : {$sonarBinFolder}");
+    print_r("\nexecCmd              : {$execCmd}");
+    print_r("\nphpInstallScanner    : {$phpInstallScanner}");
     print_r("\n----------------------");
 }
 if (!is_dir($sonarBinFolder)) {
@@ -44,8 +44,8 @@ if (!is_dir($sonarBinFolder)) {
     $obj_scanner->installScanner($projectFolder, $sonarInstallFolder, $SONAR_VERSION);
 } else {
     if (DEBUG_INFO) {
-        print_r("\nSonar-scanner is already installed: '$sonarBinFolder'");
+        print_r("\nSonar-scanner is already installed: '{$sonarBinFolder}'");
     }
 }
 
-//shell_exec(escapeshellcmd($execCmd));
+// shell_exec(escapeshellcmd($execCmd));
