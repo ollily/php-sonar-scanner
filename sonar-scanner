@@ -12,6 +12,8 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
+global $argv;
+
 $SONAR_VERSION = '8.1.0.6389';
 $DS = DIRECTORY_SEPARATOR;
 $SONAR_CMD = 'sonar-scanner';
@@ -21,7 +23,7 @@ array_shift($sonarArgs);
 $projectFolder = realpath(__DIR__);
 $sonarInstallFolder = "${projectFolder}${DS}lib";
 $sonarBinFolder = "${sonarInstallFolder}${DS}bin";
-$phpInstallScanner = __DIR__ . "${DS}src${DS}composer${DS}install-scanner";
+$phpInstallScanner = __DIR__ . "${DS}src${DS}InstallScanner";
 
 $execCmd = "${sonarBinFolder}${DS}${SONAR_CMD} " . implode(' ', $sonarArgs);
 

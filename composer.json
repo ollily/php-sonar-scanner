@@ -29,7 +29,7 @@
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
-        "php": ">=8.3",
+        "php": ">=8.4",
         "ext-zip": "*"
     },
     "provide": {
@@ -37,16 +37,15 @@
     "suggest": {
     },
     "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.0"
     },
     "config": {
     },
     "autoload": {
-        "files": [
-            "sonar-scanner",
-            "sonar-scanner-debug",
-            "src/composer/install-scanner",
-            "src/composer/unzip"
-        ]
+        "psr-4": {
+            "\\": "src",
+            "ollily\\Tools\\": "src/Tools"            
+        }
     },
     "autoload-dev": {
         "psr-4": {
@@ -57,6 +56,12 @@
         "sonar-scanner-debug"
     ],
     "scripts": {
+        "c-dry-fix": "@php vendor/bin/php-cs-fixer check --allow-unsupported-php-version=yes --allow-risky=yes --format txt",
+        "c-format": [
+            "composer c-fix"
+        ],
+        "c-fix": "@php vendor/bin/php-cs-fixer fix --allow-unsupported-php-version=yes --allow-risky=yes",
+        "c-package": "@composer archive --format=zip --dir=target/staging",
         "c-sonar": [
             "@php -f sonar-scanner -- -D project.settings=sonar-project.properties "
         ],
@@ -67,6 +72,10 @@
         "c-test": "@php -d xdebug.mode=coverage vendor/bin/phpunit -c phpunit.xml.cov"
     },
     "scripts-descriptions": {
+        "c-dry-fix": "CUSTOM: See what PHP CS Fixer will fix (dry run)",
+        "c-format": "CUSTOM: Format the code with c-fix",
+        "c-fix": "CUSTOM: PHP CS Fixer fixes your code",
+        "c-package": "CUSTOM: Create deployable package",
         "c-sonar": "CUSTOM: Sonarcloud verifies your code",
         "c-sonar-full": "CUSTOM: c-test, c-sonar",
         "c-test": "CUSTOM: PHPUnit executes all unit tests"

@@ -3,16 +3,7 @@
 
 declare(strict_types=1);
 
-/*
- * This file is part of php-sonar-scanner
- *
- * (c) 2026 ollily
- *
- * This source file is subject to the Apache-2.0 license that is bundled
- * with this source code in the file LICENSE.
- */
-
-require_once __DIR__ . DIRECTORY_SEPARATOR . 'unzip';
+require_once __DIR__ . DIRECTORY_SEPARATOR . 'Tools' . DIRECTORY_SEPARATOR . 'Unzip';
 
 class InstallScanner
 {
@@ -50,7 +41,7 @@ class InstallScanner
 //            rmdir($folder);
             print_r("\ncleanUpFolder: Cleanup up done");
         } else {
-            print_r("\ncleanUpFolder: Noting to clean in folder '${folder}'");
+            print_r("\ncleanUpFolder: Nothing to clean in folder '$folder'");
         }
     }
 
@@ -234,7 +225,7 @@ class InstallScanner
 
         if (file_exists($zipFile)) {
             print_r("\nprovideFiles: Unzipping '$zipFile'");
-            ollily\Tools\Unzip::myFile($zipFile, $tmpDir); // @phpstan-ignore class.notFound
+            \ollily\Tools\Unzip::myFile($zipFile, $tmpDir); // @phpstan-ignore class.notFound
         } else {
             $this->exitrc("Zipfile not found '$sonarZip'");
         }
