@@ -41,8 +41,12 @@
     "config": {
     },
     "autoload": {
-        "psr-4": {
-        }
+        "files": [
+            "sonar-scanner",
+            "sonar-scanner-debug",
+            "src/composer/install-scanner",
+            "src/composer/unzip"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
