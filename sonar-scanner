@@ -38,7 +38,7 @@ if (!is_dir($sonarBinFolder)) {
     $obj_scanner = new InstallScanner();
     $obj_scanner->installScanner($projectFolder, $sonarInstallFolder, $SONAR_VERSION);
 } else {
-    print_r("Sonar-scanner is already installed: '${sonarBinFolder}'");
+    print_r("\nSonar-scanner is already installed: '${sonarBinFolder}'");
 }
 
 //shell_exec(escapeshellcmd($execCmd));
