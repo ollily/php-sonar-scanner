@@ -41,13 +41,13 @@ class InstallScanner
     {
         if (!empty($folder) && is_dir($folder)) {
             print_r("\ncleanUpFolder: Cleanup folder '{$folder}'");
-            //            $recDI = new RecursiveDirectoryIterator($folder, FilesystemIterator::SKIP_DOTS);
-            //            $recII = new RecursiveIteratorIterator($recDI, RecursiveIteratorIterator::CHILD_FIRST);
-            //            /** @var SplFileInfo $deleteItem */
-            //            foreach ($recII as $deleteItem) {
-            //                $deleteItem->isDir() ? rmdir($deleteItem->getRealPath()) : unlink($deleteItem->getRealPath());
-            //            }
-            //            rmdir($folder);
+            $recDI = new RecursiveDirectoryIterator($folder, FilesystemIterator::SKIP_DOTS);
+            $recII = new RecursiveIteratorIterator($recDI, RecursiveIteratorIterator::CHILD_FIRST);
+            /** @var SplFileInfo $deleteItem */
+            foreach ($recII as $deleteItem) {
+                $deleteItem->isDir() ? rmdir($deleteItem->getRealPath()) : unlink($deleteItem->getRealPath());
+            }
+            rmdir($folder);
             print_r("\ncleanUpFolder: Cleanup up done");
         } else {
             print_r("\ncleanUpFolder: Nothing to clean in folder '{$folder}'");
