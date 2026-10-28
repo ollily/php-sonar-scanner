@@ -47,5 +47,6 @@ if (!is_dir($sonarBinFolder)) {
         print_r("\nSonar-scanner is already installed: '{$sonarBinFolder}'");
     }
 }
+print_r("\nStarting scanner...\n\n");
 
-// shell_exec(escapeshellcmd($execCmd));
+shell_exec(escapeshellcmd($execCmd));
