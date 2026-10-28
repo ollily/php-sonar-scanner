@@ -16,10 +16,14 @@ require_once __DIR__ . DIRECTORY_SEPARATOR . 'unzip';
 
 class InstallScanner
 {
+
+    private const bool DEBUG_INFO = true;
+    private const string SONAR_URL = 'https://binaries.sonarsource.com/Distribution/sonar-scanner-cli';
+
     private function exitrc(mixed $msg): void
     {
         if (!empty($msg)) {
-            echo "\nExit with '$msg'";
+            print_r("\nexitrc: Exit with '$msg'");
         }
 
         die(0);
@@ -28,7 +32,7 @@ class InstallScanner
     private function cleanUpFolder(string $folder): void
     {
         if (!empty($folder) && is_dir($folder)) {
-            echo sprintf("\nRemoving folder '%s'", $folder);
+            print_r("\ncleanUpFolder: Removing folder '${folder}'");
             $recDI = new RecursiveDirectoryIterator($folder, FilesystemIterator::SKIP_DOTS);
             $recII = new RecursiveIteratorIterator($recDI, RecursiveIteratorIterator::CHILD_FIRST);
             /** @var SplFileInfo $deleteItem */
@@ -42,7 +46,7 @@ class InstallScanner
     private function moveAllFiles(string $srcFolder, string $targetFolder): void
     {
         if (!empty($srcFolder) && is_dir($srcFolder) && !empty($targetFolder) && is_dir($targetFolder)) {
-            echo sprintf("\nMoving folder '%s' to '%s'", $srcFolder, $targetFolder);
+            print_r("\nmoveAllFiles: Moving folder '${srcFolder}' to '${targetFolder}'");
             $files = scandir($srcFolder);
             if (is_array($files)) {
                 foreach ($files as $file) {
@@ -62,10 +66,10 @@ class InstallScanner
                 $opSys = 'macosx';
                 break;
             case str_contains($phpOs, 'microsoft') :
-            case str_contains($phpOs, 'cygwin')  :
-            case str_contains($phpOs, 'mingw')  :
-            case str_contains($phpOs, 'msys')  :
-            case str_contains($phpOs, 'windows')  :
+            case str_contains($phpOs, 'cygwin') :
+            case str_contains($phpOs, 'mingw') :
+            case str_contains($phpOs, 'msys') :
+            case str_contains($phpOs, 'windows') :
                 $opSys = 'windows';
                 break;
             case str_contains($phpOs, 'linux') :
@@ -81,64 +85,70 @@ class InstallScanner
         return $opSys;
     }
 
-    private function validateInput(string &$forceInstall, int &$full, string &$sonarVersion, string &$rootDir, string &$libDir): void
+    /**
+     * 
+     * @param string $forceInstall
+     * @param int $full
+     * @param string $sonarVersion
+     * @param string $rootDir
+     * @param string $sonarDir
+     * @return array<mixed>
+     */
+    private function validateInput(string $forceInstall, int $full, string $sonarVersion, string $rootDir, string $sonarDir): array
     {
         if (!empty($forceInstall)) {
-            echo "\nForce reinstall";
+            print_r("\nvalidateInput: Force reinstall");
             $forceInstall = '-f';
         }
         if (empty($sonarVersion)) {
-            $this->exitrc('No Version given');
+            $this->exitrc('No sonarVersion given');
         }
         if (!empty($rootDir)) {
+            // Fix relative path
             $tmpRootDir = realpath($rootDir);
             if (!is_bool($tmpRootDir)) {
                 $rootDir = $tmpRootDir;
             }
-            $libDir = $rootDir . DIRECTORY_SEPARATOR . 'lib';
         } else {
-            $this->exitrc('No root given');
+            $this->exitrc('No rootDir given');
         }
         if (!is_dir($rootDir)) {
-            $this->exitrc('Root not existing');
+            $this->exitrc('rootDir not existing');
         }
-        if (is_dir($libDir)) {
-            // echo "\nNo downloadFile is necessary";
+        if (is_dir($sonarDir)) {
+            print_r("\nvalidateInput: No downloadFile is necessary");
             $full = 0;
         }
+        return [$forceInstall, $full, $rootDir];
     }
 
     /**
      * @param string $rootDir
-     * @param string $libDir
      * @param string $opSys
      * @param string $sonarVersion
      *
      * @return array<mixed,mixed>
      */
-    private function prepareSettings(string $rootDir, string $libDir, string $opSys, string $sonarVersion): array
+    private function prepareSettings(string $rootDir, string $opSys, string $sonarVersion): array
     {
-        $targetDir = $rootDir . DIRECTORY_SEPARATOR . 'target';
-        $tmpDir = $targetDir . DIRECTORY_SEPARATOR . '.tmp';
+        $tmpDir = $rootDir . DIRECTORY_SEPARATOR . 'target' . DIRECTORY_SEPARATOR . '.tmp';
 
-        $sonarUrl = 'https://binaries.sonarsource.com/Distribution/sonar-scanner-cli';
         if (!empty($opSys)) {
             $sonarZip = "sonar-scanner-cli-$sonarVersion-$opSys.zip";
-            $sonarFolder = "sonar-scanner-$sonarVersion-$opSys";
+            $sonarFolderInZip = "sonar-scanner-$sonarVersion-$opSys";
         } else {
             $sonarZip = "sonar-scanner-cli-$sonarVersion.zip";
-            $sonarFolder = "sonar-scanner-$sonarVersion";
+            $sonarFolderInZip = "sonar-scanner-$sonarVersion";
         }
-        $sonarExe = $libDir . DIRECTORY_SEPARATOR . "bin" . DIRECTORY_SEPARATOR . "sonar-scanner";
-        $dlUrl = $sonarUrl . DIRECTORY_SEPARATOR . $sonarZip;
+        $dlUrl = self::SONAR_URL . DIRECTORY_SEPARATOR . $sonarZip;
 
-        return [$targetDir, $tmpDir, $dlUrl, $sonarFolder, $sonarZip];
+        return [$tmpDir, $dlUrl, $sonarFolderInZip, $sonarZip];
     }
 
     private function downloadFile(string $tmpDir, string $dlUrl, string $sonarZip): void
     {
         if (file_exists($tmpDir . DIRECTORY_SEPARATOR . $sonarZip)) {
-            echo "\nAlready existing '$sonarZip'";
+            print_r("\nAlready existing '$sonarZip'");
         } else {
             if (is_dir($tmpDir)) {
                 $this->cleanUpFolder($tmpDir);
@@ -146,7 +156,7 @@ class InstallScanner
             mkdir($tmpDir, recursive: true);
 
             chdir($tmpDir);
-            echo "\nDownloading '$dlUrl'";
+            print_r("\ndownloadFile: Downloading '$dlUrl'");
             // curl--insecure--parallel -o $SONAR_ZIP $dlUrl;
         }
     }
@@ -157,14 +167,14 @@ class InstallScanner
         $extractFolder = $tmpDir . DIRECTORY_SEPARATOR . $sonarFolder;
 
         if (file_exists($zipFile)) {
-            echo "\nUnzipping '$sonarZip'";
+            print_r("\nprovideFiles: Unzipping '$sonarZip'");
             ollily\Tools\Unzip::myFile($zipFile, $tmpDir); // @phpstan-ignore class.notFound
         } else {
-            $this->exitrc("Nothing to unzip");
+            $this->exitrc('Nothing to unzip');
         }
 
         if (is_dir($extractFolder)) {
-            echo "\nProvide scanner files";
+            print_r("\nprovideFiles: Provide scanner files");
             if (is_dir($libDir)) {
                 $this->cleanUpFolder($libDir);
                 sleep(3);
@@ -172,7 +182,7 @@ class InstallScanner
             mkdir($libDir, recursive: true);
             $this->moveAllFiles($extractFolder, $libDir);
         } else {
-            $this->exitrc("No library found");
+            $this->exitrc('No library found');
         }
     }
 
@@ -188,36 +198,51 @@ class InstallScanner
      * <b>Options</b>
      * -f    If scanner zip-file already exists, forece a reinstall
      *
-     * @param string $rootDir
-     * @param string $sonarVersion
-     * @param string $forceInstall
+     * @param string $rootDir The base folder of this composer library
+     * @param string $sonarInstallDir The base folder, where to install the scanner
+     * @param string $sonarVersion The version of the scanner as provided by sonar-source
+     * @param string $forceInstall Reinstall the scanner
      *
      * @return bool TRUE=success, else FALSE
      */
-    public function installScanner(string $rootDir, string $sonarVersion, string $forceInstall = ''): bool
+    public function installScanner(string $rootDir, string $sonarInstallDir, string $sonarVersion, string $forceInstall = ''): bool
     {
         $result = false;
 
-        $libDir = '';
         $fullProcess = 1;
         $opSys = $this->getOpSys();
-        $this->validateInput($forceInstall, $fullProcess, $sonarVersion, $rootDir, $libDir);
-        [$targetDir, $tmpDir, $dlUrl, $sonarFolder, $sonarZip] = $this->prepareSettings($rootDir, $libDir, $opSys, $sonarVersion);
 
+        [$forceInstall, $fullProcess, $result] = $this->validateInput($forceInstall, $fullProcess, $sonarVersion, $rootDir, $sonarInstallDir);
+        [$tmpDir, $dlUrl, $sonarFolderInZip, $sonarZip] = $this->prepareSettings($rootDir, $opSys, $sonarVersion);
+
+        if (self::DEBUG_INFO) {
+            print_r("\n------------------");
+            print_r("\nrootDir          : '${rootDir}'");
+            print_r("\nsonarInstallDir  : '${sonarInstallDir}'");
+            print_r("\nsonarVersion     : '${sonarVersion}'");
+            print_r("\nforceInstall     : '${forceInstall}'");
+            print_r("\nfullProcess      : '${fullProcess}'");
+            print_r("\nopSys            : '${opSys}'");
+            print_r("\ntmpDir           : '${tmpDir}'");
+            print_r("\ndlUrl            : '${dlUrl}'");
+            print_r("\nsonarZip         : '${sonarZip}'");
+            print_r("\nsonarFolderInZip : '${sonarFolderInZip}'");
+            print_r("\n------------------");
+        }
         if ($fullProcess == 1) {
             // Full process
             $this->downloadFile($tmpDir, $dlUrl, $sonarZip);
-            $this->provideFiles($tmpDir, $libDir, $sonarFolder, $sonarZip);
+            $this->provideFiles($tmpDir, $rootDir, $sonarFolderInZip, $sonarZip);
             $result = true;
         } else {
             if ($forceInstall == '-f') {
                 // Just reinstall
-                $this->provideFiles($tmpDir, $libDir, $sonarFolder, $sonarZip);
+                $this->provideFiles($tmpDir, $rootDir, $sonarFolderInZip, $sonarZip);
             }
             $result = true;
         }
-        echo "\n";
-        
+        print_r("\n");
+
         return $result;
     }
 }
