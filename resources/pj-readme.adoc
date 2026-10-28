@@ -30,15 +30,15 @@ Unfortunately I am not able to test the library with MacOs. So link:./issues[let
 
 == Configuration
 
-Please read the link:docu-config.adoc[configuration].
+Please read the link:site/docu-config.adoc[configuration].
 
 == Usage
 
-include::{site_resource}/pj-usage.adoc[opts=optional]
+include::{site_resource}/site/pj-usage.adoc[opts=optional]
 
 == Additional Information
 
-* link:docu-commands.adoc[Composer Commands] - New commands for composer
+* link:site/docu-commands.adoc[Composer Commands] - New commands for composer
 
 == Reference
 * link:https://getcomposer.org/[Composer]
