@@ -1,0 +1,52 @@
+:hide-uri-scheme:
+:doctype: book
+
+:site_resource: .
+include::{site_resource}/../pj-settings.adoc[opts=optional]
+include::{site_resource}/../adoc-cmmn-all.adoc[opts=optional]
+
+:source-highlighter: highlight.js
+
+= {pj_gh_repo} - Configuration
+:toc:
+:toclevels: 2
+
+== Requirements
+
+* link:https://www.php.net[PHP]
+* link:https://getcomposer.org/[Composer]
+* Commandline / Shell (opt.)
+** Linux / Unix Shell or
+** Windows Shell
+
+== Configuration
+
+=== Unix / Linux
+
+There is nothing to configure. Any necessary installation will be done with the first execution. You can use this library ootb.
+
+=== Windows
+
+There is nothing to configure. Any necessary installation will be done with the first execution. You can use this library ootb.
+
+== Rescue Mode
+
+In case something doesn't work properly anymore, you can reinstall the scanner. Just delete the lib-folder. With the next run the sonar-scanner will be reinstalled.
+
+=== Structure
+
+Relevant files and folders
+
+    <project-root>
+    |- lib
+    |  |- bin
+    |
+    |- src
+    |  |- bin
+    |
+    |--vendor
+    |  |- *
+    |
+    |-composer.json
+
+_{pj_cright_author}_

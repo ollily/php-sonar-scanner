@@ -14,10 +14,10 @@
 
 // organization
 :orga_vcs_url: {acc_vcs_url}
-:orga_user: ollily
-:orga_user_name: #orga_name#
-:orga_user_email: #orga_email#
-:orga_user_hp: #orga_homepage#
+:orga_user: {acc_user}
+:orga_user_name: {acc_user_name}
+:orga_user_email: {acc_user_email}
+:orga_user_hp: {acc_user_hp}
 :orga_user_url: {orga_vcs_url}/{orga_user}[{orga_user_name}]
 
 // organization team
@@ -34,7 +34,8 @@
 // Version or "latest version"
 :pj_version: [latest version]
 // Creation year
-:pj_year: 2025
+// Creation year
+:pj_year: 2026
 // Github description
 :pj_description: A sonar-scanner for PHP using composer.
 

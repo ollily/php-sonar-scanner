@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-$headerProjName = 'php-sonar-scanner';
+$headerProjName = 'ollily/php-sonar-scanner';
 $headerProjAuthor = 'ollily';
 $headerProjYear = 2026;
 $headerText = <<<EOF
@@ -163,6 +163,15 @@ $projRules = [
     'header_comment' => ['header' => $headerText]
 ];
 
-$finder = PhpCsFixer\Finder::create()->in(__DIR__ . '/src')->in(__DIR__ . '/tests');
+$finder = PhpCsFixer\Finder::create()
+    ->name('*')
+    ->in(__DIR__ . '/src')->in(__DIR__ . '/tests');
 
-return (new PhpCsFixer\Config())->setParallelConfig(PhpCsFixer\Runner\Parallel\ParallelConfigFactory::detect())->setRules($projRules)->setFinder($finder);
+$phpfixer = (new PhpCsFixer\Config())
+    ->setCacheFile(__DIR__ . '/target/.php-cs-fixer.cache')
+    ->setParallelConfig(PhpCsFixer\Runner\Parallel\ParallelConfigFactory::detect())
+    ->setRules($projRules)
+    ->setFinder($finder);
+
+return $phpfixer;
+
