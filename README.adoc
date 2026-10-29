@@ -387,7 +387,7 @@ Unfortunately I am not able to test the library with MacOs. So link:./issues[let
 
 == Configuration
 
-Please read the link:docu-config.adoc[configuration].
+Please read the link:site/docu-config.adoc[configuration].
 
 == Usage
 
@@ -416,7 +416,7 @@ Including `sonar-project.properties` located in the project root.
 
 == Additional Information
 
-* link:docu-commands.adoc[Composer Commands] - New commands for composer
+* link:site/docu-commands.adoc[Composer Commands] - New commands for composer
 
 == Reference
 * link:https://getcomposer.org/[Composer]
